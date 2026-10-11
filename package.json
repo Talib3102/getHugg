@@ -1,0 +1,25 @@
+{
+  "name": "replicaofgethug",
+  "version": "1.0.0",
+  "description": "A pixel-perfect, high-performance frontend replica of the Hugg Tumgard product landing page ([gethugg.com/buy-tumgard/](https://gethugg.com/buy-tumgard/)) covering all sections from the top announcement bar down to the *\"BOHOT KUCH TRY KIYA HAIN, LEKIN...\"* section.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.7",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.11.1",
+    "razorpay": "^2.9.8"
+  }
+}

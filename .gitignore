@@ -1,0 +1,51 @@
+# Environment & Credentials (CRITICAL - NEVER COMMIT)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Node Modules
+node_modules/
+
+# User-Provided Heavy Assets & Scraped WordPress Dump Files
+hugg-india.b-cdn.net/
+_external/
+fonts.googleapis.com/
+wp-content/
+wp-includes/
+documents/
+*.mp4
+*.mkv
+*.mov
+
+# Temporary, Scratch & Backup Files
+*.backup*
+temp_*.html
+test_*.html
+index_processed_test.html
+*.log
+
+# Root Screenshots & Visual Testing Artifacts
+/*_screenshot.png
+/*_render.png
+/*_test.png
+/admin_*.png
+/checkout_*.png
+/complete_*.png
+/explore_*.png
+/full_*.png
+/homepage_*.png
+/kalmegh_*.png
+/mobile_*.png
+/order_*.png
+/popup_*.png
+/replica_*.png
+/test_*.png
+/tumgard_*.png
+
+# Operating System & Editor Metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

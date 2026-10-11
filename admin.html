@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Hugg Store Manager</title>
+  <link rel="icon" href="./images/cropped-Transparent_Logomark-2-32x32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/admin.css">
+</head>
+<body>
+
+  <!-- 1. LOGIN SCREEN -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="./images/Hugg-logo-2-300x120.png" alt="Hugg">
+      </div>
+      <h2>Store Admin Portal</h2>
+      <p class="subtitle">Log in to manage orders, products, and customers</p>
+
+      <div id="loginError" class="login-error"></div>
+
+      <form id="loginForm" class="login-form" onsubmit="return false;">
+        <div class="form-group">
+          <label for="adminEmail">Admin Email</label>
+          <input type="email" id="adminEmail" required placeholder="admin@gethugg.com">
+        </div>
+        <div class="form-group">
+          <label for="adminPassword">Password</label>
+          <input type="password" id="adminPassword" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="login-btn" id="loginSubmitBtn">
+          <span>Sign In to Dashboard</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. ADMIN DASHBOARD WRAPPER -->
+  <div id="adminApp" class="admin-wrapper" style="display: none;">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-brand">
+        <img src="./images/cropped-Transparent_Logomark-2-32x32.png" alt="Hugg">
+        <h3>Hugg Manager <span>PRO</span></h3>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-link active" data-view="dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-link" data-view="orders">
+          <span class="nav-icon">📦</span>
+          <span>Orders Management</span>
+        </a>
+        <a class="nav-link" data-view="customers">
+          <span class="nav-icon">👥</span>
+          <span>Customers CRM</span>
+        </a>
+        <a class="nav-link" data-view="products">
+          <span class="nav-icon">🏷️</span>
+          <span>Products &amp; Pricing</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="admin-profile">
+          <div class="admin-avatar">TA</div>
+          <div class="admin-info">
+            <h4 id="adminNameDisplay">Talib Ansari</h4>
+            <p id="adminEmailDisplay">TalibAnsari@gmail.com</p>
+          </div>
+        </div>
+        <button type="button" class="logout-btn" id="logoutBtn" title="Logout">🚪</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <header class="admin-header">
+        <div class="header-title">
+          <h2 id="currentViewTitle">Store Overview</h2>
+          <p id="currentViewSubtitle">Live sales and operational analytics</p>
+        </div>
+        <div class="header-actions">
+          <a href="/" target="_blank" class="btn-secondary">
+            <span>🌐 View Live Store</span>
+          </a>
+          <button type="button" class="btn-secondary" id="refreshBtn">
+            <span>🔄 Refresh Data</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="admin-content">
+        <!-- VIEW: DASHBOARD -->
+        <div id="viewDashboard" class="view-section active">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-info">
+                <p>Total Revenue</p>
+                <h3 id="statRevenue">₹0</h3>
+              </div>
+              <div class="stat-icon green">₹</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <p>Total Orders</p>
+                <h3 id="statOrders">0</h3>
+              </div>
+              <div class="stat-icon blue">📦</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <p>Customers</p>
+                <h3 id="statCustomers">0</h3>
+              </div>
+              <div class="stat-icon purple">👥</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <p>Pending Processing</p>
+                <h3 id="statPending">0</h3>
+              </div>
+              <div class="stat-icon amber">⏳</div>
+            </div>
+          </div>
+
+          <!-- Recent Orders Table -->
+          <div class="table-card">
+            <div class="table-header">
+              <h3>Recent Orders</h3>
+              <a href="#" class="btn-secondary" id="seeAllOrdersLink">View All Orders →</a>
+            </div>
+            <div style="overflow-x: auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody id="recentOrdersTableBody">
+                  <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Loading orders...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW: ORDERS MANAGEMENT -->
+        <div id="viewOrders" class="view-section">
+          <div class="table-card">
+            <div class="table-header">
+              <h3>All Customer Orders</h3>
+              <div class="table-filters">
+                <input type="text" id="orderSearchInput" class="filter-input" placeholder="Search ID, name, phone, city...">
+                <select id="orderStatusFilter" class="filter-select">
+                  <option value="all">All Statuses</option>
+                  <option value="processing">Processing</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <select id="paymentFilter" class="filter-select">
+                  <option value="all">All Payments</option>
+                  <option value="paid">Paid (Razorpay)</option>
+                  <option value="pending">Pending (COD)</option>
+                </select>
+              </div>
+            </div>
+            <div style="overflow-x: auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Address</th>
+                    <th>Items</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Order Status</th>
+                    <th>Update Status</th>
+                  </tr>
+                </thead>
+                <tbody id="allOrdersTableBody">
+                  <tr><td colspan="8" style="text-align:center; color:#94a3b8;">Loading orders...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW: CUSTOMERS CRM -->
+        <div id="viewCustomers" class="view-section">
+          <div class="table-card">
+            <div class="table-header">
+              <h3>Customer Database</h3>
+            </div>
+            <div style="overflow-x: auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Customer Name</th>
+                    <th>Contact</th>
+                    <th>City &amp; State</th>
+                    <th>Total Orders</th>
+                    <th>Lifetime Value</th>
+                    <th>Last Order Date</th>
+                  </tr>
+                </thead>
+                <tbody id="customersTableBody">
+                  <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Loading customers...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW: PRODUCTS & PRICING -->
+        <div id="viewProducts" class="view-section">
+          <div class="products-grid" id="productsGridContainer">
+            <!-- Product Cards Loaded dynamically -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="./scripts/admin.js"></script>
+</body>
+</html>
