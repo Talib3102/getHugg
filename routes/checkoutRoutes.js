@@ -2,9 +2,32 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 const Razorpay = require('razorpay');
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const Customer = require('../models/Customer');
+const CATALOG_BUNDLES = require('../models/catalogData');
+
+// Shared in-memory fallback storage when DB is offline
+const localOrders = require('../models/orderStore');
+
+// Helper to find a product bundle safely
+async function findProductBundle(bundleId) {
+  if (mongoose.connection.readyState === 1) {
+    try {
+      const p = await Product.findOne({ bundleId });
+      if (p) return p;
+    } catch (e) {
+      // Fall through to static catalog
+    }
+  }
+  return CATALOG_BUNDLES.find((b) => b.bundleId === bundleId) || {
+    bundleId: bundleId || '2-jars',
+    title: '2 Jars (20 Days)',
+    jarsCount: 2,
+    price: 1399,
+  };
+}
 
 // Helper to generate unique order ID
 function generateOrderId() {
@@ -33,12 +56,13 @@ router.post('/create-razorpay-order', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Bundle selection is required' });
     }
 
-    const product = await Product.findOne({ bundleId });
+    const product = await findProductBundle(bundleId);
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product bundle not found' });
     }
 
     const amountInPaise = Math.round(product.price * 100);
+
 
     const rzpOrder = await razorpay.orders.create({
       amount: amountInPaise,
@@ -98,17 +122,10 @@ router.post('/verify-payment', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Payment verification failed: Invalid signature' });
     }
 
-    const product = await Product.findOne({ bundleId }) || {
-      bundleId: bundleId || '2-jars',
-      title: '2 Jars (20 Days)',
-      jarsCount: 2,
-      price: 1399,
-    };
-
+    const product = await findProductBundle(bundleId);
     const newOrderId = generateOrderId();
 
-    // Create Order in DB
-    const newOrder = await Order.create({
+    const orderData = {
       orderId: newOrderId,
       customer: {
         name: customer.name,
@@ -123,7 +140,7 @@ router.post('/verify-payment', async (req, res) => {
         {
           bundleId: product.bundleId,
           title: product.title,
-          jarsCount: product.jarsCount,
+          jarsCount: product.jarsCount || 1,
           quantity: 1,
           price: product.price,
         },
@@ -137,34 +154,46 @@ router.post('/verify-payment', async (req, res) => {
       razorpayPaymentId: razorpay_payment_id,
       razorpaySignature: razorpay_signature,
       orderStatus: 'processing',
-    });
+      createdAt: new Date(),
+    };
 
-    // Update or Create Customer
-    await Customer.findOneAndUpdate(
-      { email: customer.email.toLowerCase() },
-      {
-        $set: {
-          name: customer.name,
-          phone: customer.phone,
-          address: customer.address,
-          pincode: customer.pincode,
-          city: customer.city || '',
-          state: customer.state || '',
-          lastOrderAt: new Date(),
-        },
-        $inc: {
-          ordersCount: 1,
-          totalSpent: product.price,
-        },
-      },
-      { upsert: true, new: true }
-    );
+    let savedOrder = orderData;
+
+    if (mongoose.connection.readyState === 1) {
+      try {
+        savedOrder = await Order.create(orderData);
+        await Customer.findOneAndUpdate(
+          { email: customer.email.toLowerCase() },
+          {
+            $set: {
+              name: customer.name,
+              phone: customer.phone,
+              address: customer.address,
+              pincode: customer.pincode,
+              city: customer.city || '',
+              state: customer.state || '',
+              lastOrderAt: new Date(),
+            },
+            $inc: {
+              ordersCount: 1,
+              totalSpent: product.price,
+            },
+          },
+          { upsert: true, new: true }
+        );
+      } catch (dbErr) {
+        console.warn('Could not save to MongoDB, saving in local cache:', dbErr.message);
+        localOrders.push(orderData);
+      }
+    } else {
+      localOrders.push(orderData);
+    }
 
     res.json({
       success: true,
       message: 'Payment verified and order created successfully',
-      orderId: newOrder.orderId,
-      order: newOrder,
+      orderId: newOrderId,
+      order: savedOrder,
     });
   } catch (err) {
     console.error('Error verifying payment:', err);
@@ -181,16 +210,10 @@ router.post('/cod', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please provide all delivery details' });
     }
 
-    const product = await Product.findOne({ bundleId }) || {
-      bundleId: bundleId || '2-jars',
-      title: '2 Jars (20 Days)',
-      jarsCount: 2,
-      price: 1399,
-    };
-
+    const product = await findProductBundle(bundleId);
     const newOrderId = generateOrderId();
 
-    const newOrder = await Order.create({
+    const orderData = {
       orderId: newOrderId,
       customer: {
         name: customer.name,
@@ -205,7 +228,7 @@ router.post('/cod', async (req, res) => {
         {
           bundleId: product.bundleId,
           title: product.title,
-          jarsCount: product.jarsCount,
+          jarsCount: product.jarsCount || 1,
           quantity: 1,
           price: product.price,
         },
@@ -216,34 +239,46 @@ router.post('/cod', async (req, res) => {
       paymentMethod: 'cod',
       paymentStatus: 'pending',
       orderStatus: 'processing',
-    });
+      createdAt: new Date(),
+    };
 
-    // Upsert Customer
-    await Customer.findOneAndUpdate(
-      { email: customer.email.toLowerCase() },
-      {
-        $set: {
-          name: customer.name,
-          phone: customer.phone,
-          address: customer.address,
-          pincode: customer.pincode,
-          city: customer.city || '',
-          state: customer.state || '',
-          lastOrderAt: new Date(),
-        },
-        $inc: {
-          ordersCount: 1,
-          totalSpent: product.price,
-        },
-      },
-      { upsert: true, new: true }
-    );
+    let savedOrder = orderData;
+
+    if (mongoose.connection.readyState === 1) {
+      try {
+        savedOrder = await Order.create(orderData);
+        await Customer.findOneAndUpdate(
+          { email: customer.email.toLowerCase() },
+          {
+            $set: {
+              name: customer.name,
+              phone: customer.phone,
+              address: customer.address,
+              pincode: customer.pincode,
+              city: customer.city || '',
+              state: customer.state || '',
+              lastOrderAt: new Date(),
+            },
+            $inc: {
+              ordersCount: 1,
+              totalSpent: product.price,
+            },
+          },
+          { upsert: true, new: true }
+        );
+      } catch (dbErr) {
+        console.warn('Could not save COD to MongoDB, saving in local cache:', dbErr.message);
+        localOrders.push(orderData);
+      }
+    } else {
+      localOrders.push(orderData);
+    }
 
     res.json({
       success: true,
       message: 'COD Order placed successfully',
-      orderId: newOrder.orderId,
-      order: newOrder,
+      orderId: newOrderId,
+      order: savedOrder,
     });
   } catch (err) {
     console.error('Error creating COD order:', err);

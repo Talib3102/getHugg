@@ -12,6 +12,7 @@ const cookieParser = require('cookie-parser');
 
 const Admin = require('./models/Admin');
 const Product = require('./models/Product');
+const CATALOG_BUNDLES = require('./models/catalogData');
 
 const productRoutes = require('./routes/productRoutes');
 const checkoutRoutes = require('./routes/checkoutRoutes');
@@ -123,114 +124,7 @@ async function seedInitialData() {
     }
 
     // 2. Seed Full Hugg Product Catalog
-    const bundles = [
-      // Tumgard
-      {
-        bundleId: '1-jar',
-        title: 'TumGard - 1 Jar (10 Days)',
-        jarsCount: 1,
-        daysCount: 10,
-        price: 699,
-        originalPrice: 799,
-        badge: 'STARTER COURSE',
-        secondaryBadge: '',
-        isPopular: false,
-      },
-      {
-        bundleId: '2-jars',
-        title: 'TumGard - 2 Jars (20 Days)',
-        jarsCount: 2,
-        daysCount: 20,
-        price: 1399,
-        originalPrice: 2397,
-        badge: 'HALF COURSE',
-        secondaryBadge: 'Best Results',
-        isPopular: true,
-      },
-      {
-        bundleId: '3-jars',
-        title: 'TumGard - 3 Jars (30 Days)',
-        jarsCount: 3,
-        daysCount: 30,
-        price: 2397,
-        originalPrice: 4794,
-        badge: 'FLAT 50% OFF',
-        secondaryBadge: 'Best Value',
-        isPopular: false,
-      },
-      // Kalmegh Bitters
-      {
-        bundleId: 'kb-6-bottles',
-        title: 'Kalmegh Bitters - 1 Week (6 Bottles)',
-        jarsCount: 6,
-        daysCount: 7,
-        price: 480,
-        originalPrice: 630,
-        badge: '1 WEEK PACK',
-        secondaryBadge: '',
-        isPopular: false,
-      },
-      {
-        bundleId: 'kb-24-bottles',
-        title: 'Kalmegh Bitters - 1 Month (24 Bottles)',
-        jarsCount: 24,
-        daysCount: 24,
-        price: 1499,
-        originalPrice: 1680,
-        badge: '1 MONTH PACK',
-        secondaryBadge: 'Most Popular',
-        isPopular: true,
-      },
-      {
-        bundleId: 'kb-72-bottles',
-        title: 'Kalmegh Bitters - Buy 3 Get 1 (72 Bottles)',
-        jarsCount: 72,
-        daysCount: 72,
-        price: 5760,
-        originalPrice: 8130,
-        badge: 'BUY 3 GET 1 FREE',
-        secondaryBadge: 'Best Value (Flash Sale)',
-        isPopular: false,
-      },
-      // ColCalm
-      {
-        bundleId: 'colcalm-2-jars',
-        title: 'ColCalm - 2 Jars (20 Days)',
-        jarsCount: 2,
-        daysCount: 20,
-        price: 1399,
-        originalPrice: 2397,
-        badge: 'HALF COURSE',
-        secondaryBadge: 'Best Results',
-        isPopular: true,
-      },
-      // FamFiber
-      {
-        bundleId: 'famfiber-1-pack',
-        title: 'FamFiber Roti Mix - 1 Pack (30 Days)',
-        jarsCount: 1,
-        daysCount: 30,
-        price: 499,
-        originalPrice: 649,
-        badge: 'MONTHLY PACK',
-        secondaryBadge: 'Prebiotic Fiber',
-        isPopular: true,
-      },
-      // Mango Leaf Tonic
-      {
-        bundleId: 'mlt-24-bottles',
-        title: 'Mango Leaf Tonic - 24 Bottles (1 Month)',
-        jarsCount: 24,
-        daysCount: 24,
-        price: 1499,
-        originalPrice: 1680,
-        badge: '1 MONTH PACK',
-        secondaryBadge: 'Sugar Support',
-        isPopular: true,
-      },
-    ];
-
-    for (const b of bundles) {
+    for (const b of CATALOG_BUNDLES) {
       await Product.findOneAndUpdate(
         { bundleId: b.bundleId },
         { $set: b },
@@ -243,28 +137,32 @@ async function seedInitialData() {
   }
 }
 
-// Connect to MongoDB Atlas & Start Server
+// Start Server and Connect to MongoDB Atlas
 const MONGO_URI = process.env.MONGO_URI;
 
-mongoose
-  .connect(MONGO_URI, { serverSelectionTimeoutMS: 8000 })
-  .then(async () => {
-    console.log('✅ Connected to MongoDB Atlas successfully.');
-    await seedInitialData();
+app.listen(PORT, () => {
+  console.log(`\n🚀 Hugg Store Multi-Page Server running at: http://localhost:${PORT}`);
+  console.log(`👉 Main Homepage: http://localhost:${PORT}`);
+  console.log(`👉 Tumgard: http://localhost:${PORT}/buy-tumgard`);
+  console.log(`👉 Kalmegh Bitters: http://localhost:${PORT}/buy-kalmegh-bitters`);
+  console.log(`👉 ColCalm: http://localhost:${PORT}/buy-colcalm`);
+  console.log(`👉 FamFiber: http://localhost:${PORT}/buy-famfiber`);
+  console.log(`👉 Mango Leaf Tonic: http://localhost:${PORT}/buy-mango-leaf-tonic`);
+  console.log(`👉 Track Order: http://localhost:${PORT}/track-order`);
+  console.log(`👉 Admin Panel: http://localhost:${PORT}/admin\n`);
 
-    app.listen(PORT, () => {
-      console.log(`🚀 Hugg Store Multi-Page Server running at: http://localhost:${PORT}`);
-      console.log(`👉 Main Homepage: http://localhost:${PORT}`);
-      console.log(`👉 Tumgard: http://localhost:${PORT}/buy-tumgard`);
-      console.log(`👉 Kalmegh Bitters: http://localhost:${PORT}/buy-kalmegh-bitters`);
-      console.log(`👉 ColCalm: http://localhost:${PORT}/buy-colcalm`);
-      console.log(`👉 FamFiber: http://localhost:${PORT}/buy-famfiber`);
-      console.log(`👉 Mango Leaf Tonic: http://localhost:${PORT}/buy-mango-leaf-tonic`);
-      console.log(`👉 Track Order: http://localhost:${PORT}/track-order`);
-      console.log(`👉 Admin Panel: http://localhost:${PORT}/admin`);
-    });
-  })
-  .catch((err) => {
-    console.error('❌ MongoDB Atlas Connection Error:', err.message);
-    process.exit(1);
-  });
+  if (MONGO_URI) {
+    mongoose
+      .connect(MONGO_URI, { serverSelectionTimeoutMS: 8000 })
+      .then(async () => {
+        console.log('✅ Connected to MongoDB Atlas successfully.');
+        await seedInitialData();
+      })
+      .catch((err) => {
+        console.warn('⚠️  MongoDB Atlas Connection Warning:', err.message);
+        console.warn('💡 Tip: Make sure your current IP address is whitelisted in MongoDB Atlas Network Access (or allow 0.0.0.0/0).');
+        console.warn('🌐 Storefront pages and static routes remain fully functional.\n');
+      });
+  }
+});
+

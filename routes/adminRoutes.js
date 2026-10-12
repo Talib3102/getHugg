@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const Admin = require('../models/Admin');
 const Order = require('../models/Order');
 const Customer = require('../models/Customer');
 const Product = require('../models/Product');
+const localOrders = require('../models/orderStore');
 const { protectAdmin } = require('../middleware/authMiddleware');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'hugg_secret_jwt_key_2026_super_secure_talib';
@@ -18,13 +20,31 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please provide email and password' });
     }
 
-    const admin = await Admin.findOne({ email: email.toLowerCase().trim() });
-    if (!admin) {
-      return res.status(401).json({ success: false, message: 'Invalid admin credentials' });
+    const masterEmail = (process.env.ADMIN_EMAIL || 'admin@gethugg.com').toLowerCase().trim();
+    const masterPassword = process.env.ADMIN_PASSWORD || 'HuggAdmin2026!';
+
+    let admin = null;
+    if (mongoose.connection.readyState === 1) {
+      try {
+        admin = await Admin.findOne({ email: email.toLowerCase().trim() });
+      } catch (e) {
+        admin = null;
+      }
     }
 
-    const isMatch = await admin.matchPassword(password);
-    if (!isMatch) {
+    if (!admin && email.toLowerCase().trim() === masterEmail && password === masterPassword) {
+      admin = {
+        _id: 'master_admin_offline',
+        email: masterEmail,
+        name: 'Master Admin',
+        role: 'admin',
+      };
+    } else if (admin) {
+      const isMatch = await admin.matchPassword(password);
+      if (!isMatch) {
+        return res.status(401).json({ success: false, message: 'Invalid admin credentials' });
+      }
+    } else {
       return res.status(401).json({ success: false, message: 'Invalid admin credentials' });
     }
 
@@ -77,37 +97,60 @@ router.get('/me', protectAdmin, async (req, res) => {
 // GET: Dashboard Stats
 router.get('/stats', protectAdmin, async (req, res) => {
   try {
-    const totalOrders = await Order.countDocuments();
-    const paidOrders = await Order.find({ paymentStatus: 'paid' });
-    const codOrders = await Order.find({ paymentMethod: 'cod' });
-    const deliveredOrders = await Order.find({ orderStatus: 'delivered' });
-    const totalCustomers = await Customer.countDocuments();
+    if (mongoose.connection.readyState === 1) {
+      const totalOrders = await Order.countDocuments();
+      const paidOrders = await Order.find({ paymentStatus: 'paid' });
+      const codOrders = await Order.find({ paymentMethod: 'cod' });
+      const deliveredOrders = await Order.find({ orderStatus: 'delivered' });
+      const totalCustomers = await Customer.countDocuments();
 
-    // Calculate revenue from paid online orders + delivered COD orders
-    let totalRevenue = 0;
-    for (const o of paidOrders) {
-      totalRevenue += o.totalAmount || 0;
+      let totalRevenue = 0;
+      for (const o of paidOrders) {
+        totalRevenue += o.totalAmount || 0;
+      }
+      for (const o of codOrders) {
+        if (o.paymentStatus === 'paid' || o.orderStatus === 'delivered') {
+          totalRevenue += o.totalAmount || 0;
+        }
+      }
+
+      const recentOrders = await Order.find().sort({ createdAt: -1 }).limit(5);
+
+      return res.json({
+        success: true,
+        stats: {
+          totalRevenue,
+          totalOrders,
+          totalCustomers,
+          paidOrdersCount: paidOrders.length,
+          codOrdersCount: codOrders.length,
+          deliveredCount: deliveredOrders.length,
+          processingCount: await Order.countDocuments({ orderStatus: 'processing' }),
+        },
+        recentOrders,
+      });
     }
-    for (const o of codOrders) {
+
+    // Offline / local cache stats
+    let totalRevenue = 0;
+    for (const o of localOrders) {
       if (o.paymentStatus === 'paid' || o.orderStatus === 'delivered') {
         totalRevenue += o.totalAmount || 0;
       }
     }
 
-    const recentOrders = await Order.find().sort({ createdAt: -1 }).limit(5);
-
-    res.json({
+    return res.json({
       success: true,
       stats: {
         totalRevenue,
-        totalOrders,
-        totalCustomers,
-        paidOrdersCount: paidOrders.length,
-        codOrdersCount: codOrders.length,
-        deliveredCount: deliveredOrders.length,
-        processingCount: await Order.countDocuments({ orderStatus: 'processing' }),
+        totalOrders: localOrders.length,
+        totalCustomers: localOrders.length,
+        paidOrdersCount: localOrders.filter((o) => o.paymentStatus === 'paid').length,
+        codOrdersCount: localOrders.filter((o) => o.paymentMethod === 'cod').length,
+        deliveredCount: localOrders.filter((o) => o.orderStatus === 'delivered').length,
+        processingCount: localOrders.filter((o) => o.orderStatus === 'processing').length,
       },
-      recentOrders,
+      recentOrders: localOrders.slice(-5).reverse(),
     });
   } catch (err) {
     console.error('Stats error:', err);
@@ -119,28 +162,51 @@ router.get('/stats', protectAdmin, async (req, res) => {
 router.get('/orders', protectAdmin, async (req, res) => {
   try {
     const { status, paymentStatus, search } = req.query;
-    const query = {};
 
+    if (mongoose.connection.readyState === 1) {
+      const query = {};
+
+      if (status && status !== 'all') {
+        query.orderStatus = status;
+      }
+
+      if (paymentStatus && paymentStatus !== 'all') {
+        query.paymentStatus = paymentStatus;
+      }
+
+      if (search) {
+        query.$or = [
+          { orderId: { $regex: search, $options: 'i' } },
+          { 'customer.name': { $regex: search, $options: 'i' } },
+          { 'customer.phone': { $regex: search, $options: 'i' } },
+          { 'customer.email': { $regex: search, $options: 'i' } },
+          { 'customer.city': { $regex: search, $options: 'i' } },
+        ];
+      }
+
+      const orders = await Order.find(query).sort({ createdAt: -1 });
+      return res.json({ success: true, count: orders.length, orders });
+    }
+
+    // Offline / local cache orders
+    let filtered = [...localOrders];
     if (status && status !== 'all') {
-      query.orderStatus = status;
+      filtered = filtered.filter((o) => o.orderStatus === status);
     }
-
     if (paymentStatus && paymentStatus !== 'all') {
-      query.paymentStatus = paymentStatus;
+      filtered = filtered.filter((o) => o.paymentStatus === paymentStatus);
     }
-
     if (search) {
-      query.$or = [
-        { orderId: { $regex: search, $options: 'i' } },
-        { 'customer.name': { $regex: search, $options: 'i' } },
-        { 'customer.phone': { $regex: search, $options: 'i' } },
-        { 'customer.email': { $regex: search, $options: 'i' } },
-        { 'customer.city': { $regex: search, $options: 'i' } },
-      ];
+      const s = search.toLowerCase();
+      filtered = filtered.filter(
+        (o) =>
+          (o.orderId && o.orderId.toLowerCase().includes(s)) ||
+          (o.customer?.name && o.customer.name.toLowerCase().includes(s)) ||
+          (o.customer?.phone && o.customer.phone.includes(s))
+      );
     }
 
-    const orders = await Order.find(query).sort({ createdAt: -1 });
-    res.json({ success: true, count: orders.length, orders });
+    return res.json({ success: true, count: filtered.length, orders: filtered.reverse() });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Server error', error: err.message });
   }

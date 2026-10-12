@@ -391,10 +391,15 @@
   /* --------------------------------------------------------------------------
      10. CHECKOUT MODAL & RAZORPAY / COD INTEGRATION
      -------------------------------------------------------------------------- */
-  const BUNDLE_MAP = {
-    '1': { bundleId: '2-jars', title: 'Tumgard - 2 Jars (20 Days)', price: 1399, origPrice: 2397, badge: 'HALF COURSE', savings: 'Save ₹998' },
-    '2': { bundleId: '1-jar', title: 'Tumgard - 1 Jar (10 Days)', price: 699, origPrice: 799, badge: 'STARTER COURSE', savings: 'Save ₹100' },
-    '3': { bundleId: '3-jars', title: 'Tumgard - 3 Jars (30 Days)', price: 2397, origPrice: 4794, badge: 'FLAT 50% OFF', savings: 'Save ₹2,397' }
+  const isColCalm = window.location.pathname.includes('colcalm') || document.title.toLowerCase().includes('colcalm');
+  const BUNDLE_MAP = isColCalm ? {
+    '1': { bundleId: 'colcalm-2-jars', title: 'ColCalm - 2 Jars (20 Days)', price: 1399, origPrice: 2397, badge: 'HALF COURSE', savings: 'Save ₹998', img: './images/colcalm-gallery-img-01-new.webp' },
+    '2': { bundleId: 'colcalm-1-jar', title: 'ColCalm - 1 Jar (10 Days)', price: 699, origPrice: 799, badge: 'STARTER COURSE', savings: 'Save ₹100', img: './images/colcalm-gallery-img-01-new.webp' },
+    '3': { bundleId: 'colcalm-3-jars', title: 'ColCalm - 3 Jars (30 Days)', price: 2397, origPrice: 4794, badge: 'FLAT 50% OFF', savings: 'Save ₹2,397', img: './images/colcalm-gallery-img-01-new.webp' }
+  } : {
+    '1': { bundleId: '2-jars', title: 'Tumgard - 2 Jars (20 Days)', price: 1399, origPrice: 2397, badge: 'HALF COURSE', savings: 'Save ₹998', img: './images/Rectangle 6211 (1).webp' },
+    '2': { bundleId: '1-jar', title: 'Tumgard - 1 Jar (10 Days)', price: 699, origPrice: 799, badge: 'STARTER COURSE', savings: 'Save ₹100', img: './images/Rectangle 6211 (1).webp' },
+    '3': { bundleId: '3-jars', title: 'Tumgard - 3 Jars (30 Days)', price: 2397, origPrice: 4794, badge: 'FLAT 50% OFF', savings: 'Save ₹2,397', img: './images/Rectangle 6211 (1).webp' }
   };
 
   let currentSelectedBundle = BUNDLE_MAP['1'];
@@ -415,6 +420,7 @@
     // Update Checkout UI
     const titleEl = document.getElementById('checkoutItemTitle');
     const badgeEl = document.getElementById('checkoutItemBadge');
+    const imgEl = document.getElementById('checkoutItemImg');
     const priceEl = document.getElementById('checkoutItemPrice');
     const origPriceEl = document.getElementById('checkoutItemOrigPrice');
     const savingsEl = document.getElementById('checkoutItemSavings');
@@ -424,6 +430,7 @@
 
     if (titleEl) titleEl.textContent = currentSelectedBundle.title;
     if (badgeEl) badgeEl.textContent = currentSelectedBundle.badge;
+    if (imgEl && currentSelectedBundle.img) imgEl.src = currentSelectedBundle.img;
     if (priceEl) priceEl.textContent = `₹${finalPrice.toLocaleString('en-IN')}`;
     if (origPriceEl) origPriceEl.textContent = `₹${currentSelectedBundle.origPrice.toLocaleString('en-IN')}`;
     if (savingsEl) savingsEl.textContent = currentSelectedBundle.savings;
