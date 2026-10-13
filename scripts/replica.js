@@ -42,6 +42,10 @@
     'GCC30': '3'
   };
 
+  window.selectVariation = function (val, updateUrl = true) {
+    applyVariation(val, updateUrl);
+  };
+
   function applyVariation(val, updateUrl = true) {
     const data = VARIATIONS[val] || VARIATIONS['1'];
 
@@ -63,6 +67,10 @@
       emiElem.textContent = data.emi;
     }
 
+    if (typeof BUNDLE_MAP !== 'undefined') {
+      currentSelectedBundle = BUNDLE_MAP[val] || BUNDLE_MAP['1'];
+    }
+
     // Update Cart link
     const linkElem = document.getElementById('product-1-link');
     if (linkElem) {
@@ -73,7 +81,9 @@
     if (updateUrl && window.history && window.history.replaceState) {
       try {
         const url = new URL(window.location.href);
-        url.searchParams.set('variation', data.code);
+        const isColCalm = window.location.pathname.includes('colcalm');
+        const codeMap = { '1': 'GCC20', '2': 'GCC10', '3': 'GCC30' };
+        url.searchParams.set('variation', isColCalm ? (codeMap[val] || 'GCC20') : data.code);
         window.history.replaceState({}, '', url);
       } catch (e) {}
     }
@@ -449,6 +459,10 @@
     document.body.style.overflow = '';
   }
 
+  window.openCheckout = openCheckout;
+  window.closeCheckout = closeCheckout;
+
+
   function initCheckout() {
     const modal = document.getElementById('checkoutModal');
     if (!modal) return;
@@ -776,7 +790,7 @@
   /* --------------------------------------------------------------------------
      9. DOCUMENT INITIALIZATION
      -------------------------------------------------------------------------- */
-  document.addEventListener('DOMContentLoaded', function () {
+  function initAll() {
     // 1. Radio change listeners
     const radios = document.querySelectorAll('input[name="productVariation"]');
     radios.forEach(radio => {
@@ -791,7 +805,7 @@
       label.addEventListener('click', function () {
         const forId = this.getAttribute('for');
         const input = document.getElementById(forId);
-        if (input && !input.checked) {
+        if (input) {
           input.checked = true;
           applyVariation(input.value);
         }
@@ -850,6 +864,11 @@
     initReportsSlider();
     initHashNavigation();
     loadBackendPrices();
-  });
+  }
 
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
 })();

@@ -33,10 +33,20 @@ app.use('/styles', express.static(path.join(__dirname, 'styles')));
 app.use('/scripts', express.static(path.join(__dirname, 'scripts')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/documents', express.static(path.join(__dirname, 'documents')));
+app.use('/buy-colcalm/styles', express.static(path.join(__dirname, 'styles')));
+app.use('/buy-colcalm/scripts', express.static(path.join(__dirname, 'scripts')));
+app.use('/buy-colcalm/images', express.static(path.join(__dirname, 'images')));
+app.use('/buy-mango-leaf-tonic/styles', express.static(path.join(__dirname, 'styles')));
+app.use('/buy-mango-leaf-tonic/scripts', express.static(path.join(__dirname, 'scripts')));
+app.use('/buy-mango-leaf-tonic/images', express.static(path.join(__dirname, 'images')));
+app.use('/buy-kalmegh-bitters/styles', express.static(path.join(__dirname, 'styles')));
+app.use('/buy-kalmegh-bitters/scripts', express.static(path.join(__dirname, 'scripts')));
+app.use('/buy-kalmegh-bitters/images', express.static(path.join(__dirname, 'images')));
 app.use('/wp-content', express.static(path.join(__dirname, 'wp-content')));
 app.use('/wp-includes', express.static(path.join(__dirname, 'wp-includes')));
 app.use('/_external', express.static(path.join(__dirname, '_external')));
 app.use('/fonts.googleapis.com', express.static(path.join(__dirname, 'fonts.googleapis.com')));
+app.use('/fonts.gstatic.com', express.static(path.join(__dirname, 'fonts.gstatic.com')));
 app.use('/hugg-india.b-cdn.net', express.static(path.join(__dirname, 'hugg-india.b-cdn.net')));
 
 // Fallback: If an asset under /wp-content or /wp-includes is requested, resolve from /images
@@ -50,7 +60,7 @@ app.use(['/wp-content', '/wp-includes'], (req, res, next) => {
 });
 
 // Handle direct navigation to explore-products or the folder-named path
-app.get(['/explore-products', '/httpsgethugg.com#explore-products', '/httpsgethugg.com'], (req, res) => {
+app.get(['/index.html', '/explore-products', '/httpsgethugg.com#explore-products', '/httpsgethugg.com'], (req, res) => {
   res.redirect('/#explore-products');
 });
 
@@ -73,11 +83,11 @@ app.get('/buy-tumgard', (req, res) => {
   res.sendFile(path.join(__dirname, 'buy-tumgard.html'));
 });
 
-app.get('/buy-kalmegh-bitters', (req, res) => {
+app.get(['/buy-kalmegh-bitters', '/buy-kalmegh-bitters/'], (req, res) => {
   res.sendFile(path.join(__dirname, 'buy-kalmegh-bitters.html'));
 });
 
-app.get('/buy-colcalm', (req, res) => {
+app.get(['/buy-colcalm', '/buy-colcalm/'], (req, res) => {
   res.sendFile(path.join(__dirname, 'buy-colcalm.html'));
 });
 
@@ -85,7 +95,7 @@ app.get('/buy-famfiber', (req, res) => {
   res.sendFile(path.join(__dirname, 'buy-famfiber.html'));
 });
 
-app.get('/buy-mango-leaf-tonic', (req, res) => {
+app.get(['/buy-mango-leaf-tonic', '/buy-mango-leaf-tonic/'], (req, res) => {
   res.sendFile(path.join(__dirname, 'buy-mango-leaf-tonic.html'));
 });
 

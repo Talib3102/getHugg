@@ -12,6 +12,8 @@ node_modules/
 hugg-india.b-cdn.net/
 _external/
 fonts.googleapis.com/
+fonts.gstatic.com/
+httpsgethugg.*/
 wp-content/
 wp-includes/
 documents/
@@ -20,6 +22,7 @@ documents/
 *.mov
 
 # Temporary, Scratch & Backup Files
+scratch/
 *.backup*
 temp_*.html
 test_*.html

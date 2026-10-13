@@ -4334,32 +4334,22 @@ html { scroll-behavior: smooth; }
 #explore-products { scroll-margin-top: 90px; }
 </style>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    function checkHash() {
-        if (window.location.hash === '#explore-products') {
-            var el = document.getElementById('explore-products');
-            if (el) {
-                setTimeout(function() {
-                    el.scrollIntoView({ behavior: 'smooth' });
-                }, 150);
-            }
+function scrollToExploreProducts() {
+    if (window.location.hash === '#explore-products') {
+        var el = document.getElementById('explore-products');
+        if (el) {
+            setTimeout(function() {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
         }
     }
-    checkHash();
-    window.addEventListener('hashchange', checkHash);
-    
-    var logoLink = document.getElementById('hugg-logo-link');
-    if (logoLink) {
-        logoLink.addEventListener('click', function(e) {
-            var el = document.getElementById('explore-products');
-            if (el) {
-                e.preventDefault();
-                el.scrollIntoView({ behavior: 'smooth' });
-                window.history.pushState(null, '', '#explore-products');
-            }
-        });
-    }
-});
+}
+window.addEventListener('DOMContentLoaded', scrollToExploreProducts);
+window.addEventListener('load', scrollToExploreProducts);
+window.addEventListener('hashchange', scrollToExploreProducts);
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    scrollToExploreProducts();
+}
 </script>
 
 </head>
@@ -4408,7 +4398,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </ul>
                             </div>
                             <div class="col-2">
-                                <a href="#explore-products" id="hugg-logo-link"><img src="/wp-content/webp-express/webp-images/themes/kadence-child/assets/img/header/logo.png.webp" alt="logo"></a>
+                                <a href="/#explore-products" id="hugg-logo-link" onclick="var el=document.getElementById('explore-products');if(el){el.scrollIntoView({behavior:'smooth'});if(window.location.hash!=='#explore-products'){window.history.pushState(null,'','/#explore-products');}return false;}"><img src="/wp-content/webp-express/webp-images/themes/kadence-child/assets/img/header/logo.png.webp" alt="logo"></a>
                             </div>
                             <div class="col-5">
                                 <ul>
@@ -4685,10 +4675,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <a href="/buy-colcalm">
                                     <div class="product-box">
                                         <div class="image">
-                                            <img src="/wp-content/themes/kadence-child/assets/img/home-page/CCMain1.webp"http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="ColCalm" data-lazy-src="/wp-content/themes/kadence-child/assets/img/home-page/CCMain1.webp"><noscript><img src="/wp-content/themes/kadence-child/assets/img/home-page/CCMain1.webp" alt="ColCalm"></noscript>
+                                            <img src="/wp-content/themes/kadence-child/assets/img/home-page/CCMain1.webp" alt="ColCalm">
                                         </div>
                                         <div class="review">
-                                            <img src="/wp-content/themes/kadence-child/assets/img/home-page/stars-5.svg"http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E" alt="5 star" data-lazy-src="/wp-content/themes/kadence-child/assets/img/home-page/stars-5.svg"><noscript><img src="/wp-content/themes/kadence-child/assets/img/home-page/stars-5.svg" alt="5 star"></noscript>
+                                            <img src="/wp-content/themes/kadence-child/assets/img/home-page/stars-5.svg" alt="5 star">
                                             <p>(2)</p>
                                         </div>
                                         <div class="details">

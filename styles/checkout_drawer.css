@@ -1,0 +1,894 @@
+/* CHECKOUT DRAWER & MODAL STYLES (NEO-BRUTALIST / CLEAN LUXE)
+   ========================================================================== */
+
+.checkout-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 99999;
+  display: flex;
+  justify-content: flex-end;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
+}
+
+.checkout-modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.checkout-drawer {
+  width: 100%;
+  max-width: 520px;
+  height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 35px rgba(0, 0, 0, 0.25);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+.checkout-modal-backdrop.active .checkout-drawer {
+  transform: translateX(0);
+}
+
+.checkout-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  background: #fdfcf7;
+  border-bottom: 2px solid #000;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.checkout-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.checkout-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}
+
+.checkout-header h3 {
+  font-family: var(--font-heading, inherit);
+  font-size: 19px;
+  font-weight: 800;
+  margin: 0;
+  color: #111;
+  letter-spacing: -0.3px;
+}
+
+.checkout-subtitle {
+  font-size: 12px;
+  color: #555;
+  margin: 2px 0 0;
+  font-weight: 500;
+}
+
+.checkout-close {
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.checkout-close:hover {
+  transform: scale(1.15);
+  color: #000;
+}
+
+.checkout-body {
+  padding: 24px;
+  flex: 1;
+}
+
+/* Item Summary in Checkout */
+.checkout-item-summary {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: #f7faf5;
+  border: 2px solid #54ba83;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.item-img-wrap {
+  width: 72px;
+  height: 72px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #d2e4cb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.item-img-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-details h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #111;
+}
+
+.item-badges {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.checkout-badge {
+  background: #000;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.delivery-badge {
+  background: #e6f6ec;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.item-price-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.item-price {
+  font-size: 18px;
+  font-weight: 900;
+  color: #111;
+}
+
+.item-orig-price {
+  font-size: 13px;
+  color: #888;
+  text-decoration: line-through;
+}
+
+.item-savings {
+  font-size: 12px;
+  color: #15803d;
+  font-weight: 700;
+}
+
+/* Form Styles */
+.form-section-title {
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #444;
+  margin: 20px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #eee;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1.5px solid #d0d0d0;
+  border-radius: 8px;
+  background: #fafafa;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s, background 0.2s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #000;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.col-half {
+  flex: 1;
+}
+
+.col-third {
+  flex: 1;
+}
+
+/* Payment Selector Cards */
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.payment-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 2px solid #e2e2e2;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.payment-card input[type="radio"] {
+  margin-top: 4px;
+  width: 18px;
+  height: 18px;
+  accent-color: #000;
+  cursor: pointer;
+}
+
+.payment-card.active {
+  border-color: #000;
+  background: #fbfbf6;
+  box-shadow: 3px 3px 0 #000;
+}
+
+.payment-card-info {
+  flex: 1;
+}
+
+.payment-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.pay-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #111;
+}
+
+.pay-tag {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #eee;
+  color: #444;
+}
+
+.pay-tag.green {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.pay-desc {
+  font-size: 12px;
+  color: #666;
+  margin: 0 0 8px;
+}
+
+.payment-logos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.payment-logos img {
+  height: 18px;
+  object-fit: contain;
+}
+
+/* Cost Breakdown */
+.order-cost-breakdown {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  border: 1px solid #ebebeb;
+}
+
+.cost-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.free-text {
+  color: #15803d;
+  font-weight: 800;
+}
+
+.total-line {
+  border-top: 1px dashed #ccc;
+  padding-top: 10px;
+  margin-bottom: 0;
+  font-size: 16px;
+  color: #000;
+}
+
+.total-price {
+  font-size: 20px;
+  font-weight: 900;
+  color: #000;
+}
+
+/* Submit Button & Footer */
+.checkout-footer {
+  text-align: center;
+  padding-bottom: 16px;
+}
+
+.checkout-submit-btn {
+  width: 100%;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #ffc25e 0%, #d28f1f 100%);
+  color: #000;
+  border: 2px solid #000;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.checkout-submit-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #000;
+}
+
+.checkout-submit-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #000;
+}
+
+.checkout-loader {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 0, 0, 0.2);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.checkout-secure-notice {
+  font-size: 11px;
+  color: #777;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Floating Actions: Gut Quiz Mascot & WhatsApp */
+.floating-actions-container {
+  position: fixed;
+  right: 14px;
+  bottom: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  z-index: 99999;
+}
+
+.gut-quiz-floating-btn {
+  width: 52px;
+  height: 52px;
+  cursor: pointer;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
+  transition: transform 0.2s ease;
+}
+
+.gut-quiz-floating-btn:hover {
+  transform: scale(1.1);
+}
+
+.gut-quiz-floating-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.whatsapp-floating-btn {
+  width: 50px;
+  height: 50px;
+  background-color: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.45);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  text-decoration: none;
+}
+
+.whatsapp-floating-btn:hover {
+  transform: scale(1.1);
+}
+
+.whatsapp-floating-btn svg {
+  width: 28px;
+  height: 28px;
+  fill: #ffffff;
+}
+
+/* ==========================================================================
+   EXACT FIDELITY BOTTOM SIDE ALIGNMENTS (MATCHING WALKTHROUGH VIDEO)
+   ========================================================================== */
+
+/* 1. FAQ Section */
+.faq-section {
+  padding: 70px 0 15px !important;
+  background-image: url("../images/faq-background.png") !important;
+  background-position: center center !important;
+  background-size: cover !important;
+  position: relative !important;
+}
+
+.faq-section .row {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+}
+
+.faq-section .col-6 {
+  flex: 0 0 50% !important;
+  max-width: 50% !important;
+  box-sizing: border-box !important;
+}
+
+.faq-section .col-6:first-of-type {
+  max-width: 580px !important;
+  margin-left: auto !important;
+}
+
+.faq-section .col-6:last-of-type {
+  text-align: right !important;
+}
+
+.faq-section .col-6:last-of-type img {
+  max-width: 480px !important;
+  width: 100% !important;
+  height: auto !important;
+  display: inline-block !important;
+  margin-bottom: -6px !important;
+}
+
+.faq-section h2 {
+  font-size: 38px !important;
+  font-weight: 800 !important;
+  text-transform: lowercase !important;
+  margin-bottom: 25px !important;
+  color: #000000 !important;
+}
+
+.faq-section h2 span {
+  color: #55b983 !important;
+}
+
+/* 2. Big Auto Scroll Marquee */
+.auto-scroll-section.big-auto-scroll-section {
+  background: #ffffff !important;
+  padding: 100px 0 40px !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+
+.big-auto-scroll-section h2 {
+  white-space: nowrap !important;
+  animation: move_rtl 22s linear infinite !important;
+  color: #000000 !important;
+  font-size: 56px !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.big-auto-scroll-section h2 span {
+  color: #55b983 !important;
+}
+
+.big-auto-scroll-section spancontainer {
+  display: inline-flex !important;
+  align-items: center !important;
+  position: relative !important;
+  padding-right: 50px !important;
+  margin-right: 35px !important;
+}
+
+.big-auto-scroll-section spancontainer::after {
+  content: " " !important;
+  display: inline-block !important;
+  position: absolute !important;
+  right: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 18px !important;
+  height: 18px !important;
+  background: #000000 !important;
+  border-radius: 50% !important;
+}
+
+/* 3. Bottle with Scrolling Text */
+.bottle-with-scrolling-text-section {
+  text-align: center !important;
+  max-width: 500px !important;
+  margin: auto !important;
+  margin-top: -160px !important;
+  z-index: 15 !important;
+  position: relative !important;
+  pointer-events: none !important;
+}
+
+.bottle-with-scrolling-text-section .container {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.bottle-with-scrolling-text-section img {
+  width: 220px !important;
+  height: auto !important;
+  display: inline-block !important;
+  filter: drop-shadow(0 12px 24px rgba(0,0,0,0.15)) !important;
+}
+
+/* 4. Har Roz Ka Food Doubt? Banner */
+.footer-top {
+  margin-top: 50px !important;
+  background-color: #55B983 !important;
+  position: relative !important;
+  overflow: visible !important;
+  width: 100% !important;
+}
+
+.ft-desktop {
+  background-color: #55B983 !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.ft-desktop > .container {
+  position: relative !important;
+  padding-top: 55px !important;
+  padding-bottom: 55px !important;
+}
+
+.footer-top .ft-lft {
+  width: 50% !important;
+  text-align: left !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.ft-lft h4 {
+  font-size: 56px !important;
+  line-height: 1.05 !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+  text-transform: capitalize !important;
+}
+
+.ft-lft .ft-white {
+  color: #ffffff !important;
+}
+
+.ft-lft .ft-black {
+  color: #000000 !important;
+  margin-bottom: 24px !important;
+}
+
+.ft-lft .main-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  padding: 14px 42px 12px !important;
+  background: #ffc25e !important;
+  color: #000000 !important;
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  border: 2px solid #000000 !important;
+  border-radius: 8px !important;
+  box-shadow: 4px 4px 0 #000000 !important;
+  cursor: pointer !important;
+  transition: transform 0.15s, box-shadow 0.15s !important;
+  text-decoration: none !important;
+}
+
+.ft-lft .main-btn:hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 6px 6px 0 #000000 !important;
+}
+
+.ft-lft .main-btn img {
+  width: 26px !important;
+  height: auto !important;
+  display: inline-block !important;
+}
+
+.ft-desktop .ft-rgt {
+  position: absolute !important;
+  top: -100px !important;
+  right: -20px !important;
+  z-index: 2 !important;
+  width: 52% !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  pointer-events: none !important;
+}
+
+.ft-desktop .ft-rgt img {
+  max-width: 580px !important;
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+}
+
+/* 5. Desktop Footer Columns */
+.footer {
+  background: #ffffff !important;
+  padding: 50px 0 100px !important;
+  border-top: 1px solid #eeeeee !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+.footer .container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+}
+
+.footer .row {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+}
+
+.footer .col-1-5 {
+  flex: 0 0 16% !important;
+  max-width: 16% !important;
+  padding: 0 15px !important;
+}
+
+.footer .col-2-5 {
+  flex: 0 0 24% !important;
+  max-width: 24% !important;
+  padding: 0 15px !important;
+}
+
+.footer .col-3 {
+  flex: 0 0 22% !important;
+  max-width: 22% !important;
+  padding: 0 15px !important;
+}
+
+.footer .col-4 {
+  flex: 0 0 26% !important;
+  max-width: 26% !important;
+  padding: 0 15px !important;
+}
+
+.footer .col-1 {
+  flex: 0 0 12% !important;
+  max-width: 12% !important;
+  padding: 0 15px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-end !important;
+}
+
+.footer .col-1 img {
+  width: 80px !important;
+  height: auto !important;
+  display: block !important;
+  margin-top: 0 !important;
+}
+
+.footer .new-accordion-item {
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  margin-bottom: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.footer .footer-head {
+  display: block !important;
+  margin-bottom: 16px !important;
+  cursor: default !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.footer .footer-head h4 {
+  font-size: 14.5px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  color: #000000 !important;
+  margin: 0 !important;
+}
+
+.footer .footer-head img {
+  display: none !important;
+}
+
+.footer .new-accordion-content {
+  display: block !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.footer,
+.footer p,
+.footer span,
+.footer div,
+.footer ul,
+.footer ul li,
+.footer ul li a,
+.footer a {
+  color: #2b2b2b !important;
+}
+
+.footer ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.footer ul li {
+  margin-bottom: 12px !important;
+  display: block !important;
+  font-size: 13.5px !important;
+  line-height: 1.5 !important;
+  color: #2b2b2b !important;
+}
+
+.footer ul li a {
+  color: #2b2b2b !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease !important;
+  font-weight: 400 !important;
+}
+
+.footer ul li a:hover {
+  color: #55b983 !important;
+  text-decoration: underline !important;
+}
+
+/* 6. Sticky Bottom Bar */
+.landing-sticky-button-section {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  background: #2b2b2b !important;
+  padding: 14px 0 !important;
+  box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.3) !important;
+  z-index: 10000 !important;
+  display: block !important;
+}
+
+.landing-sticky-button-section .container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.landing-sticky-button-section .row {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.landing-sticky-button-section p {
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  letter-spacing: 0.3px !important;
+}
+
+.landing-sticky-button-section .product-btn {
+  background: #ffc25e !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  border-radius: 8px !important;
+  padding: 12px 35px 10px !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 3px 3px 0 #000000 !important;
+  cursor: pointer !important;
+  display: inline-block !important;
+  text-align: center !important;
+  margin-left: auto !important;
+  width: auto !important;
+}
+
+.landing-sticky-button-section .product-btn:hover {
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0 #000000 !important;
+}
+
